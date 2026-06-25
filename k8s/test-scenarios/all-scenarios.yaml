@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ai-agent-test
+---
+# Scenario 1: CrashLoopBackOff — missing DATABASE_URL
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crashloop-missing-env
+  namespace: ai-agent-test
+  labels:
+    scenario: crashloop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crashloop-missing-env
+  template:
+    metadata:
+      labels:
+        app: crashloop-missing-env
+        scenario: crashloop
+    spec:
+      containers:
+        - name: app
+          image: busybox:1.36
+          command: ["sh", "-c", "echo DATABASE_URL=$DATABASE_URL; test -n \"$DATABASE_URL\" || exit 1; sleep 3600"]
+          env: []
+---
+# Scenario 2: ImagePullBackOff — invalid image tag
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imagepull-wrong-tag
+  namespace: ai-agent-test
+  labels:
+    scenario: imagepull
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: imagepull-wrong-tag
+  template:
+    metadata:
+      labels:
+        app: imagepull-wrong-tag
+        scenario: imagepull
+    spec:
+      containers:
+        - name: app
+          image: nginx:this-tag-does-not-exist-12345
+---
+# Scenario 3: OOMKilled — memory limit too low
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oom-low-memory
+  namespace: ai-agent-test
+  labels:
+    scenario: oom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oom-low-memory
+  template:
+    metadata:
+      labels:
+        app: oom-low-memory
+        scenario: oom
+    spec:
+      containers:
+        - name: app
+          image: polinux/stress
+          command: ["stress"]
+          args: ["--vm", "1", "--vm-bytes", "128M", "--vm-hang", "1"]
+          resources:
+            limits:
+              memory: "32Mi"
+            requests:
+              memory: "32Mi"
+---
+# Scenario 4: Service selector mismatch — no endpoints
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selector-backend
+  namespace: ai-agent-test
+  labels:
+    scenario: selector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: selector-backend
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: selector-backend
+        version: v1
+        scenario: selector
+    spec:
+      containers:
+        - name: app
+          image: nginx:1.25-alpine
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: selector-mismatch-svc
+  namespace: ai-agent-test
+  labels:
+    scenario: selector
+spec:
+  selector:
+    app: selector-backend
+    version: wrong-label
+  ports:
+    - port: 80
+      targetPort: 80
