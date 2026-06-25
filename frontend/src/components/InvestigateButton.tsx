@@ -11,8 +11,19 @@ export function InvestigateButton({ onClick, disabled }: InvestigateButtonProps)
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+      className="btn-primary inline-flex items-center gap-2 px-6 py-3 disabled:transform-none"
     >
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        className="h-4 w-4"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        aria-hidden
+      >
+        <circle cx="11" cy="11" r="7" />
+        <path d="M20 20l-3-3" strokeLinecap="round" />
+      </svg>
       Investigate Cluster
     </button>
   );

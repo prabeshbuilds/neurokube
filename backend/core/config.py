@@ -9,8 +9,14 @@ class Settings(BaseSettings):
     )
 
     openrouter_api_key: str = ""
-    openrouter_model: str = ""
+    openrouter_model: str = "openai/gpt-4o-mini"
+    openrouter_base_url: str = "https://openrouter.ai/api/v1"
+    openrouter_timeout: int = 60
+    openrouter_max_retries: int = 3
     kubeconfig_path: str = ""
+
+    insforge_base_url: str = "https://g95zitdu.us-east.insforge.app"
+    insforge_anon_key: str = ""
 
     cors_origins: list[str] = ["http://localhost:3000"]
 

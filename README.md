@@ -71,4 +71,56 @@ npm run dev
 
 ## Status
 
-Foundation setup complete. Kubernetes investigation and AI reasoning are not yet implemented.
+Foundation setup complete. Kubernetes investigation and AI diagnosis are available via `POST /investigate`.
+
+### Investigate endpoint
+
+```bash
+curl -X POST http://localhost:8000/investigate
+```
+
+Collects Kubernetes evidence, runs LLM reasoning via OpenRouter, and returns root cause + suggested fix.
+
+Configure AI in `backend/.env`:
+
+```env
+OPENROUTER_API_KEY=your-insforge-provisioned-key
+OPENROUTER_MODEL=openai/gpt-4o-mini
+INSFORGE_ANON_KEY=your-insforge-anon-key
+```
+
+Configure frontend in `frontend/.env.local`:
+
+```env
+NEXT_PUBLIC_INSFORGE_BASE_URL=https://g95zitdu.us-east.insforge.app
+NEXT_PUBLIC_INSFORGE_ANON_KEY=your-insforge-anon-key
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+### Dashboard
+
+1. Sign up / sign in at http://localhost:3000/login
+2. **Select a cluster** from your kubeconfig (all contexts are listed)
+3. Click **Investigate Cluster**
+4. Watch live progress via InsForge Realtime
+5. View diagnosis (or healthy-cluster message) and investigation history
+
+### Integration testing
+
+Deploy intentional Kubernetes failures and validate AI diagnosis:
+
+```bash
+./scripts/test-scenarios.sh apply <your-context>
+./scripts/test-scenarios.sh status <your-context>
+./scripts/test-scenarios.sh delete <your-context>
+```
+
+See [docs/INTEGRATION_TESTING.md](docs/INTEGRATION_TESTING.md) for the full checklist.
+
+## API Endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/health` | Service health check |
+| GET | `/clusters` | List kubeconfig contexts (auth required) |
+| POST | `/investigate` | Investigate selected cluster and return AI diagnosis |
