@@ -6,7 +6,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./backend/.env.example
+      - ./backend/.env
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
       - OPENROUTER_MODEL=${OPENROUTER_MODEL:-}
