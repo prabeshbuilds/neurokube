@@ -9,6 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@insforge/sdk": "^1.4.2",
+    "@tanstack/react-query": "^5.101.1",
+    "axios": "^1.18.1",
     "next": "^15.5.19",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
