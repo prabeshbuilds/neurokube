@@ -95,3 +95,5 @@ class LogsCollector:
             return matched[-MAX_LINES_PER_POD:]
 
         return lines[-MAX_LINES_PER_POD:]
+
+

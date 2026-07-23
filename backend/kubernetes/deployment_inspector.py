@@ -92,3 +92,6 @@ class DeploymentInspector:
             "issues": issues,
             "conditions": failed_conditions,
         }
+
+
+
